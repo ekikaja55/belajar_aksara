@@ -1,16 +1,42 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class SceneLoader : MonoBehaviour
+namespace BelajarAksara.Core
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+  public class SceneLoader : MonoBehaviour
+  {
+    public static SceneLoader Instance { get; private set; }
+
+    private void Awake()
     {
-        
+      if (Instance != null && Instance != this)
+      {
+        Destroy(gameObject);
+        return;
+      }
+
+      Instance = this;
+      DontDestroyOnLoad(gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void LoadScene(string sceneName)
     {
-        
+      SceneManager.LoadScene(sceneName);
     }
+
+    // Berguna nanti untuk loading screen / transisi per scene (opsional si)
+    public void LoadSceneAsync(string sceneName)
+    {
+      StartCoroutine(LoadSceneRoutine(sceneName));
+    }
+
+    private System.Collections.IEnumerator LoadSceneRoutine(string sceneName)
+    {
+      AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+      while (!operation.isDone)
+      {
+        yield return null;
+      }
+    }
+  }
 }

@@ -1,0 +1,113 @@
+=================================================
+TODO - BELAJAR AKSARA (Unity 2D URP)
+=================================================
+
+TAHAP 1 - FONDASI (Core) SELESAI
+-------------------------------------------------
+[.] GameManager.cs
+    - Singleton pattern + DontDestroyOnLoad
+    - Simpan state global: current level, current score, lives
+[.] SceneLoader.cs
+    - Fungsi LoadScene(string sceneName) / LoadScene(int index)
+    - Dipanggil dari semua tombol navigasi antar scene
+[.] Attach GameManager ke scene MainMenu, test DontDestroyOnLoad
+    jalan (pindah scene, GameManager gak ke-destroy)
+
+
+TAHAP 2 - DATA LAYER SELESAI
+-------------------------------------------------
+[.] HighscoreEntry.cs
+    - Model: waktu, score, level_mulai, level_akhir
+[.] SettingsData.cs
+    - Model: bg_music volume, sfx volume
+[.] AksaraDatabase.cs
+    - Static array/object 18 huruf aksara tunggal
+    - Static array/object 9 kombinasi 2 huruf
+    - Static array/object 6 kombinasi 3 huruf
+    - Bisa isi data dummy dulu kalau asset gambar belum lengkap
+[.] Constants.cs
+    - Prefix asset (asset_[nama_huruf].png)
+    - Path folder (Resources, StreamingAssets)
+[.] (Opsional, bisa nyusul) SQLiteService.cs
+    - Sementara bisa pakai PlayerPrefs dulu buat testing cepat
+    - Ganti ke SQLite kalau logic utama udah jalan
+
+
+TAHAP 3 - MAIN MENU (scene 00)
+-------------------------------------------------
+[ ] Setup Canvas + EventSystem di scene 00_MainMenu
+[ ] Buat 4 Button: Mulai, Highscore, Pengaturan, Keluar
+    + tombol tutorial, tentang
+[ ] MainMenuUI.cs
+    - OnClick tiap button manggil SceneLoader
+[ ] Test: dari MainMenu bisa pindah ke scene lain dan balik lagi
+
+
+TAHAP 4 - INGAME LEVEL 1 (scene 07) [PRIORITAS - INTI GAMEPLAY]
+-------------------------------------------------
+[ ] Setup Canvas: skor text, lives text, pertanyaan text,
+    3 button jawaban (ha/ga/ra), drop box, icon lampu (hint),
+    tombol keluar
+[ ] LevelingManager.cs
+    - Load urutan soal level 1 (18 huruf, urut, no randomize)
+    - Cek jawaban benar/salah
+    - Update skor (+100 kalau benar), lives -1 kalau salah
+    - Trigger next soal / next scene kalau level selesai
+[ ] IngameUI.cs
+    - Render pertanyaan & pilihan jawaban dari AksaraDatabase
+    - Handle drag jawaban ke drop box (atau klik, sesuai desain final)
+    - Update tampilan skor & lives real-time
+    - Modal konfirmasi saat klik tombol keluar
+[ ] Test: main dari soal 1 sampai soal 18, cek transisi ke
+    PostIngame sesuai kondisi (lives habis / level selesai)
+
+
+TAHAP 5 - POST INGAME (scene 10, 11, 12)
+-------------------------------------------------
+[ ] PostIngameUI.cs (dipakai di 3 scene, behavior beda dikit)
+[ ] Scene 10 - GameOver: render skor, tombol ke highscore
+[ ] Scene 11 - NextLevel: render skor, tombol lanjut/tidak
+[ ] Scene 12 - EndGame: render skor, tombol highscore/menu awal
+[ ] Sambungkan logic dari LevelingManager ke 3 scene ini
+
+
+TAHAP 6 - SCENE PENDUKUNG (bisa dicicil, pola mirip)
+-------------------------------------------------
+[ ] 01_Highscore - load data dari SQLite/PlayerPrefs, tampilkan
+    list (waktu, score, level_mulai, level_akhir)
+[ ] 02_Settings - slider bg_music & sfx, tombol simpan
+[ ] 03_About - text + foto pembuat (static)
+[ ] 04_PraPlaying1_SelectLevel - render 3 tombol level
+    (lock/unlock sesuai progress)
+[ ] 05_PraPlaying2_Tutorial - text tutorial + tombol lanjut
+[ ] 06_PraPlaying3_Dictionary - grid kamus aksara (referensi)
+
+
+TAHAP 7 - INGAME LEVEL 2 & 3 (scene 08, 09)
+-------------------------------------------------
+[ ] Duplikasi/reuse IngameUI dari Level 1
+[ ] Sesuaikan LevelingManager: kombinasi 2 huruf (level 2),
+    kombinasi 3 huruf (level 3)
+[ ] Sesuaikan skor (+300 level 2, +600 level 3)
+
+
+TAHAP 8 - AUDIO
+-------------------------------------------------
+[ ] AudioManager.cs - singleton, handle BGM + 6 SFX
+[ ] Import & hubungkan BGM + SFX ke tiap event
+    (klik tombol, benar, salah, dll)
+
+
+TAHAP 9 - POLISH & FINALISASI
+-------------------------------------------------
+[ ] Ganti PlayerPrefs (kalau dipakai sementara) ke SQLite asli
+[ ] Testing penuh alur game dari awal sampai akhir
+[ ] Cek semua scene sudah terdaftar di Build Profiles urut benar
+[ ] Build APK
+[ ] Rekam demo_apk.mp4
+[ ] Susun laporan_project_game.pdf
+[ ] Kumpulkan struktur folder zip akhir sesuai format:
+    source_project/, belajar_aksara.apk, laporan_project_game.pdf,
+    asset_pendukung/, demo_apk.mp4
+
+=================================================
