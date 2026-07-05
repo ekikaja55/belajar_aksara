@@ -6,8 +6,44 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: Assets/Scenes/00_MainMenu.unity
+    guid: b21b398b2e597154cb64fc907a37fe6f
+  - enabled: 1
+    path: Assets/Scenes/01_Highscore.unity
+    guid: fd563454a74406d47806d19a124adaf4
+  - enabled: 1
+    path: Assets/Scenes/02_Settings.unity
+    guid: 3465d67def44cfa49ac02a1b552f49f1
+  - enabled: 1
+    path: Assets/Scenes/03_About.unity
+    guid: 27dd73166032c0d4397c3abf2a776551
+  - enabled: 1
+    path: Assets/Scenes/04_PraPlaying1_SelectLevel.unity
+    guid: b0955d1490eb9f74da56466c12774a16
+  - enabled: 1
+    path: Assets/Scenes/05_PraPlaying2_Tutorial.unity
+    guid: 06bfeef00ac80b6408961261b03e5709
+  - enabled: 1
+    path: Assets/Scenes/06_PraPlaying3_Dictionary.unity
+    guid: 82b41e3f54051084199595ad91b5419b
+  - enabled: 1
+    path: Assets/Scenes/07_Ingame_Level1.unity
+    guid: f816dfe6842e16246a4e82e43833184f
+  - enabled: 1
+    path: Assets/Scenes/08_Ingame_Level2.unity
+    guid: cce706932dec42844ae20cbd8ff688ed
+  - enabled: 1
+    path: Assets/Scenes/09_Ingame_Level3.unity
+    guid: 133735a706e0715468b3d26f5fd04037
+  - enabled: 1
+    path: Assets/Scenes/10_PostIngame1_GameOver.unity
+    guid: 0af89c8c2a7b9b046b75cb668ed5b48d
+  - enabled: 1
+    path: Assets/Scenes/11_PostIngame2_NextLevel.unity
+    guid: eafc3fe962231884a9c60f14e218a957
+  - enabled: 1
+    path: Assets/Scenes/12_PostIngame3_EndGame.unity
+    guid: 34c85461b83abed4f863fc2ed642d9af
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
