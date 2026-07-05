@@ -36,6 +36,8 @@ Belajar Aksara adalah game edukatif 2D yang dirancang untuk membantu pemain memp
 - **Database**: SQLite (highscore, pengaturan, dan progress pemain)
 
 ## Struktur Proyek (Folder Assets)
+
+```
 Assets/
 ├── Scenes/          Seluruh scene permainan, dari menu utama hingga post-ingame
 ├── Scripts/
@@ -50,7 +52,7 @@ Assets/
 ├── Audio/           Musik latar dan efek suara
 ├── Resources/       Aset yang dimuat secara dinamis saat runtime
 └── StreamingAssets/ Berkas database SQLite bawaan
-
+```
 ## Alur Permainan
 
 1. Pemain membuka menu utama dan dapat mengakses tutorial, kamus aksara, highscore, atau pengaturan.
