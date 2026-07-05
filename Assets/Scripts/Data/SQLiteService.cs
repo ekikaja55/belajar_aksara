@@ -138,8 +138,8 @@ namespace BelajarAksara.Data
         SettingsRow defaultRow = new SettingsRow
         {
           Id = 1,
-          BgMusicVolume = 1.0f,
-          SfxVolume = 1.0f
+          BgMusicVolume = 0.5f,
+          SfxVolume = 0.5f
         };
         _connection.Insert(defaultRow);
       }

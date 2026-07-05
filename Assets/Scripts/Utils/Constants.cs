@@ -9,7 +9,7 @@ namespace BelajarAksara.Utils
     public const string SCENE_SETTINGS = "02_Settings";
     public const string SCENE_ABOUT = "03_About";
     public const string SCENE_PRAPLAYING_1_SELECT_LEVEL = "04_PraPlaying1_SelectLevel";
-    public const string SCENE_PRAPLAYING_2_TUTORIAL = "05_PraPlaying2_Tutorial";
+    public const string SCENE_PRAPLAYING_2_TUTORIAL = "05_PraPlaying2_Tutorial";  
     public const string SCENE_PRAPLAYING_3_DICTIONARY = "06_PraPlaying3_Dictionary";
     public const string SCENE_INGAME_LEVEL_1 = "07_Ingame_Level1";
     public const string SCENE_INGAME_LEVEL_2 = "08_Ingame_Level2";

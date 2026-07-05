@@ -1,16 +1,22 @@
 using UnityEngine;
+using UnityEngine.UI;
+using BelajarAksara.Core;
+using BelajarAksara.Utils;
 
-public class AboutUI : MonoBehaviour
+namespace BelajarAksara.UI
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+  public class AboutUI : MonoBehaviour
+  {
+    public Button btnBack;
+
+    private void Start()
     {
-        
+      btnBack.onClick.AddListener(OnBackClicked);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnBackClicked()
     {
-        
+      SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
     }
+  }
 }

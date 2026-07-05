@@ -4,46 +4,57 @@ TODO - BELAJAR AKSARA (Unity 2D URP)
 
 TAHAP 1 - FONDASI (Core) SELESAI
 -------------------------------------------------
-[.] GameManager.cs
+[x] GameManager.cs
     - Singleton pattern + DontDestroyOnLoad
     - Simpan state global: current level, current score, lives
-[.] SceneLoader.cs
+[x] SceneLoader.cs
     - Fungsi LoadScene(string sceneName) / LoadScene(int index)
     - Dipanggil dari semua tombol navigasi antar scene
-[.] Attach GameManager ke scene MainMenu, test DontDestroyOnLoad
+[x] Attach GameManager ke scene MainMenu, test DontDestroyOnLoad
     jalan (pindah scene, GameManager gak ke-destroy)
 
 
 TAHAP 2 - DATA LAYER SELESAI
 -------------------------------------------------
-[.] HighscoreEntry.cs
+[x] HighscoreEntry.cs
     - Model: waktu, score, level_mulai, level_akhir
-[.] SettingsData.cs
+[x] SettingsData.cs
     - Model: bg_music volume, sfx volume
-[.] AksaraDatabase.cs
+[x] AksaraDatabase.cs
     - Static array/object 18 huruf aksara tunggal
     - Static array/object 9 kombinasi 2 huruf
     - Static array/object 6 kombinasi 3 huruf
     - Bisa isi data dummy dulu kalau asset gambar belum lengkap
-[.] Constants.cs
+[x] Constants.cs
     - Prefix asset (asset_[nama_huruf].png)
     - Path folder (Resources, StreamingAssets)
-[.] (Opsional, bisa nyusul) SQLiteService.cs
-    - Sementara bisa pakai PlayerPrefs dulu buat testing cepat
-    - Ganti ke SQLite kalau logic utama udah jalan
+[x] SQLiteService.cs
+    - Sudah pakai SQLite-net asli, bukan PlayerPrefs sementara
 
 
-TAHAP 3 - MAIN MENU (scene 00)
+TAHAP 3 - MAIN MENU (scene 00) SELESAI
 -------------------------------------------------
-[ ] Setup Canvas + EventSystem di scene 00_MainMenu
-[ ] Buat 4 Button: Mulai, Highscore, Pengaturan, Keluar
-    + tombol tutorial, tentang
-[ ] MainMenuUI.cs
+[x] Setup Canvas + EventSystem di scene 00_MainMenu
+[x] Buat 6 Button: Mulai, Highscore, Pengaturan, Keluar,
+    Tutorial, Tentang
+[x] MainMenuUI.cs
     - OnClick tiap button manggil SceneLoader
-[ ] Test: dari MainMenu bisa pindah ke scene lain dan balik lagi
+[x] Test: dari MainMenu bisa pindah ke scene lain dan balik lagi
 
 
-TAHAP 4 - INGAME LEVEL 1 (scene 07) [PRIORITAS - INTI GAMEPLAY]
+TAHAP 4 - SCENE PENDUKUNG (bisa dicicil, pola mirip)
+-------------------------------------------------
+[x] 03_About - text + foto pembuat (static)
+[x] 02_Settings - slider bg_music & sfx, tombol simpan
+[x] 01_Highscore - load data dari SQLite, tampilkan
+    list (waktu, score, level_mulai, level_akhir)
+[ ] 04_PraPlaying1_SelectLevel - render 3 tombol level
+    (lock/unlock sesuai progress)
+[ ] 05_PraPlaying2_Tutorial - text tutorial + tombol lanjut
+[ ] 06_PraPlaying3_Dictionary - grid kamus aksara (referensi)
+
+
+TAHAP 5 - INGAME LEVEL 1 (scene 07) [INTI GAMEPLAY]
 -------------------------------------------------
 [ ] Setup Canvas: skor text, lives text, pertanyaan text,
     3 button jawaban (ha/ga/ra), drop box, icon lampu (hint),
@@ -62,25 +73,13 @@ TAHAP 4 - INGAME LEVEL 1 (scene 07) [PRIORITAS - INTI GAMEPLAY]
     PostIngame sesuai kondisi (lives habis / level selesai)
 
 
-TAHAP 5 - POST INGAME (scene 10, 11, 12)
+TAHAP 6 - POST INGAME (scene 10, 11, 12)
 -------------------------------------------------
 [ ] PostIngameUI.cs (dipakai di 3 scene, behavior beda dikit)
 [ ] Scene 10 - GameOver: render skor, tombol ke highscore
 [ ] Scene 11 - NextLevel: render skor, tombol lanjut/tidak
 [ ] Scene 12 - EndGame: render skor, tombol highscore/menu awal
 [ ] Sambungkan logic dari LevelingManager ke 3 scene ini
-
-
-TAHAP 6 - SCENE PENDUKUNG (bisa dicicil, pola mirip)
--------------------------------------------------
-[ ] 01_Highscore - load data dari SQLite/PlayerPrefs, tampilkan
-    list (waktu, score, level_mulai, level_akhir)
-[ ] 02_Settings - slider bg_music & sfx, tombol simpan
-[ ] 03_About - text + foto pembuat (static)
-[ ] 04_PraPlaying1_SelectLevel - render 3 tombol level
-    (lock/unlock sesuai progress)
-[ ] 05_PraPlaying2_Tutorial - text tutorial + tombol lanjut
-[ ] 06_PraPlaying3_Dictionary - grid kamus aksara (referensi)
 
 
 TAHAP 7 - INGAME LEVEL 2 & 3 (scene 08, 09)
@@ -100,14 +99,15 @@ TAHAP 8 - AUDIO
 
 TAHAP 9 - POLISH & FINALISASI
 -------------------------------------------------
-[ ] Ganti PlayerPrefs (kalau dipakai sementara) ke SQLite asli
+[ ] Import semua asset asli (sprite, audio, font) dari Google Drive
 [ ] Testing penuh alur game dari awal sampai akhir
 [ ] Cek semua scene sudah terdaftar di Build Profiles urut benar
-[ ] Build APK
-[ ] Rekam demo_apk.mp4
+[ ] Ganti Company Name di Player Settings (masih DefaultCompany)
+[ ] Build EXE
+[ ] Rekam demo_exe.mp4
 [ ] Susun laporan_project_game.pdf
 [ ] Kumpulkan struktur folder zip akhir sesuai format:
-    source_project/, belajar_aksara.apk, laporan_project_game.pdf,
-    asset_pendukung/, demo_apk.mp4
+    source_project/, belajar_aksara.exe, laporan_project_game.pdf,
+    asset_pendukung/, demo_exe.mp4
 
 =================================================
