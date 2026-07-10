@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using BelajarAksara.Core;
 using BelajarAksara.Data;
 using BelajarAksara.Utils;
+using BelajarAksara.Managers;
 
 namespace BelajarAksara.UI
 {
@@ -24,17 +25,17 @@ namespace BelajarAksara.UI
     {
       btnBack.onClick.AddListener(OnBackClicked);
       // ===== DUMMY DATA UNTUK TESTING - HAPUS/COMMENT SEBELUM FINAL =====
-      InsertDummyDataForTesting();
+      // InsertDummyDataForTesting();
       LoadAndRenderHighscores();
     }
 
     private void InsertDummyDataForTesting()
     {
-      SQLiteService.SaveHighscore(new HighscoreEntry("17:00 08-09-2026", 8100, 1, 3));
-      SQLiteService.SaveHighscore(new HighscoreEntry("14:30 07-09-2026", 5200, 1, 2));
-      SQLiteService.SaveHighscore(new HighscoreEntry("09:15 05-09-2026", 3400, 1, 1));
-      SQLiteService.SaveHighscore(new HighscoreEntry("20:45 03-09-2026", 9600, 2, 3));
-      SQLiteService.SaveHighscore(new HighscoreEntry("11:20 01-09-2026", 1800, 1, 1));
+      SQLiteService.SaveHighscore(new HighscoreEntry("08-09-2026", 8100, 1, 3));
+      SQLiteService.SaveHighscore(new HighscoreEntry("07-09-2026", 5200, 1, 2));
+      SQLiteService.SaveHighscore(new HighscoreEntry("05-09-2026", 3400, 1, 1));
+      SQLiteService.SaveHighscore(new HighscoreEntry("03-09-2026", 9600, 2, 3));
+      SQLiteService.SaveHighscore(new HighscoreEntry("01-09-2026", 1800, 1, 1));
     }
 
     private void LoadAndRenderHighscores()
@@ -82,6 +83,7 @@ namespace BelajarAksara.UI
 
     private void OnBackClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
       SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
     }
   }

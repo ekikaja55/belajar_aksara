@@ -1,159 +1,137 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections;
-using BelajarAksara.Core;
+using UnityEngine.EventSystems; // Wajib ditambahkan untuk EventTrigger
+using BelajarAksara.Managers;
 using BelajarAksara.Data;
+using BelajarAksara.Core;
 using BelajarAksara.Utils;
 
 namespace BelajarAksara.UI
 {
   public class SettingsUI : MonoBehaviour
   {
-    [Header("Sliders")]
-    public Slider sliderBgm;
-    public Slider sliderSfx;
-
-    [Header("Main Buttons")]
+    [Header("UI Elements")]
+    public Slider bgmSlider;
+    public Slider sfxSlider;
     public Button btnSave;
-    public Button btnBack;
+    public Button btnKeluar;
 
-    [Header("Confirm Modal")]
-    public GameObject confirmModal;
-    public Button btnSaveAndExit;
-    public Button btnExitWithoutSave;
-    public Button btnCancel;
-
-    [Header("Toast Notification")]
-    public GameObject toastNotification;
-    public TextMeshProUGUI toastMessage;
-
-    // Menyimpan nilai slider TERAKHIR YANG SUDAH DI-SAVE,
-    // dipakai untuk membandingkan apakah ada perubahan yang belum disimpan
-    private float _savedBgmValue;
-    private float _savedSfxValue;
-
-    // Referensi coroutine toast yang sedang berjalan, biar bisa
-    // di-stop kalau toast baru muncul sebelum yang lama selesai
-    private Coroutine _toastCoroutine;
+    // Backup nilai asli
+    private float _originalBgmVolume;
+    private float _originalSfxVolume;
 
     private void Start()
     {
-      // 1. Load data settings tersimpan dari SQLite, isi ke slider
-      LoadSettingsToUI();
+      SettingsData savedSettings = SQLiteService.GetSettings();
 
-      // 2. Daftarkan semua listener tombol
+      _originalBgmVolume = savedSettings.BgMusicVolume;
+      _originalSfxVolume = savedSettings.SfxVolume;
+
+      bgmSlider.value = _originalBgmVolume;
+      sfxSlider.value = _originalSfxVolume;
+
+      // 1. Mendaftarkan fungsi ubah volume secara real-time
+      bgmSlider.onValueChanged.AddListener(PreviewBgmVolume);
+      sfxSlider.onValueChanged.AddListener(PreviewSfxVolume);
+
+      // 2. Mendaftarkan fungsi pemutaran suara HANYA saat jari dilepas
+      SetupSfxPreviewTrigger();
+
       btnSave.onClick.AddListener(OnSaveClicked);
-      btnBack.onClick.AddListener(OnBackClicked);
-
-      btnSaveAndExit.onClick.AddListener(OnModalSaveAndExit);
-      btnExitWithoutSave.onClick.AddListener(OnModalExitWithoutSave);
-      btnCancel.onClick.AddListener(OnModalCancel);
-
-      // 3. Pastikan modal & toast tersembunyi di awal
-      confirmModal.SetActive(false);
-      toastNotification.SetActive(false);
+      btnKeluar.onClick.AddListener(OnKeluarClicked);
     }
 
-    private void LoadSettingsToUI()
+    // ----- PREVIEW VOLUME (Hanya mengubah angka, BUKAN memutar suara) -----
+    private void PreviewBgmVolume(float volume)
     {
-      SettingsData data = SQLiteService.GetSettings();
-
-      sliderBgm.value = data.BgMusicVolume;
-      sliderSfx.value = data.SfxVolume;
-
-      // Simpan nilai ini sebagai "baseline" pembanding nanti
-      _savedBgmValue = data.BgMusicVolume;
-      _savedSfxValue = data.SfxVolume;
+      if (AudioManager.Instance != null)
+        AudioManager.Instance.bgmSource.volume = volume;
     }
 
-    // Cek: apakah nilai slider SEKARANG beda dari nilai yang tersimpan terakhir?
-    private bool HasUnsavedChanges()
+    private void PreviewSfxVolume(float volume)
     {
-      // Pakai toleransi kecil (epsilon) karena float tidak selalu pas 100% sama
-      float epsilon = 0.001f;
-      bool bgmChanged = Mathf.Abs(sliderBgm.value - _savedBgmValue) > epsilon;
-      bool sfxChanged = Mathf.Abs(sliderSfx.value - _savedSfxValue) > epsilon;
-
-      return bgmChanged || sfxChanged;
+      if (AudioManager.Instance != null)
+        AudioManager.Instance.sfxSource.volume = volume;
     }
 
-    private void SaveCurrentSettings()
+    // ----- EVENT TRIGGER (Untuk menghindari suara menumpuk/earrape) -----
+    private void SetupSfxPreviewTrigger()
     {
-      SettingsData data = new SettingsData(sliderBgm.value, sliderSfx.value);
-      SQLiteService.SaveSettings(data);
+      // Tambahkan komponen EventTrigger ke sfxSlider lewat kode
+      EventTrigger trigger = sfxSlider.gameObject.GetComponent<EventTrigger>();
+      if (trigger == null)
+        trigger = sfxSlider.gameObject.AddComponent<EventTrigger>();
 
-      // Update baseline setelah save berhasil
-      _savedBgmValue = sliderBgm.value;
-      _savedSfxValue = sliderSfx.value;
+      // Buat event khusus untuk PointerUp (saat layar/mouse dilepas)
+      EventTrigger.Entry entry = new EventTrigger.Entry
+      {
+        eventID = EventTriggerType.PointerUp
+      };
 
-      // TODO nanti: kalau AudioManager sudah ada, panggil di sini
-      // untuk langsung apply volume baru ke BGM/SFX yang sedang main
+      entry.callback.AddListener((data) => { PlaySfxPreviewSound(); });
+      trigger.triggers.Add(entry);
     }
 
-    // ----- MAIN BUTTONS -----
+    private void PlaySfxPreviewSound()
+    {
+      // Suara baru diputar satu kali setelah pemain selesai menggeser
+      if (AudioManager.Instance != null)
+        AudioManager.Instance.PlayBtnClick();
+    }
 
+    // ----- PENYIMPANAN -----
     private void OnSaveClicked()
     {
-      SaveCurrentSettings();
-      ShowToast("Perubahan disimpan!");
+      SettingsData newData = new SettingsData
+      {
+        BgMusicVolume = bgmSlider.value,
+        SfxVolume = sfxSlider.value
+      };
+      SQLiteService.SaveSettings(newData);
+
+      _originalBgmVolume = bgmSlider.value;
+      _originalSfxVolume = sfxSlider.value;
+
+      ModalManager.Instance.Show(
+          "Pengaturan berhasil disimpan!",
+          new ModalButtonData("Oke", () => { ModalManager.Instance.Hide(); })
+      );
     }
 
-    private void OnBackClicked()
+    // ----- KELUAR & VALIDASI PERUBAHAN -----
+    private void OnKeluarClicked()
     {
-      if (HasUnsavedChanges())
+      // Cek apakah nilai slider saat ini berbeda dari nilai asli
+      // (Menggunakan Mathf.Abs karena membandingkan tipe float langsung kadang tidak akurat)
+      bool isBgmChanged = Mathf.Abs(bgmSlider.value - _originalBgmVolume) > 0.01f;
+      bool isSfxChanged = Mathf.Abs(sfxSlider.value - _originalSfxVolume) > 0.01f;
+
+      if (isBgmChanged || isSfxChanged)
       {
-        // Ada perubahan belum disimpan -> tampilkan modal konfirmasi
-        confirmModal.SetActive(true);
+        // Trigger modal karena ada yang belum disave
+        ModalManager.Instance.Show(
+            "Ada perubahan yang belum disimpan. Yakin ingin keluar?",
+            new ModalButtonData("Ya, Keluar", ProceedExit),
+            new ModalButtonData("Batal", () => { ModalManager.Instance.Hide(); })
+        );
       }
       else
       {
-        // Tidak ada perubahan -> langsung kembali ke menu
-        SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
+        // Tidak ada perubahan, langsung keluar dengan aman
+        ProceedExit();
       }
     }
 
-    // ----- MODAL ACTIONS -----
-
-    private void OnModalSaveAndExit()
+    private void ProceedExit()
     {
-      SaveCurrentSettings();
-      confirmModal.SetActive(false);
-      SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
-    }
-
-    private void OnModalExitWithoutSave()
-    {
-      confirmModal.SetActive(false);
-      SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
-    }
-
-    private void OnModalCancel()
-    {
-      // Cuma tutup modal, tetap di scene Settings, TIDAK reset slider
-      confirmModal.SetActive(false);
-    }
-
-    // ----- TOAST NOTIFICATION -----
-
-    private void ShowToast(string message)
-    {
-      // Kalau ada toast yang masih jalan, hentikan dulu biar nggak numpuk/tabrakan
-      if (_toastCoroutine != null)
+      // REVERT: Kembalikan volume AudioManager ke nilai aslinya
+      if (AudioManager.Instance != null)
       {
-        StopCoroutine(_toastCoroutine);
+        AudioManager.Instance.bgmSource.volume = _originalBgmVolume;
+        AudioManager.Instance.sfxSource.volume = _originalSfxVolume;
       }
 
-      toastMessage.text = message;
-      toastNotification.SetActive(true);
-      _toastCoroutine = StartCoroutine(HideToastAfterDelay(2f));
-    }
-
-    private IEnumerator HideToastAfterDelay(float delay)
-    {
-      yield return new WaitForSeconds(delay);
-      toastNotification.SetActive(false);
-      _toastCoroutine = null;
+      SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
     }
   }
 }

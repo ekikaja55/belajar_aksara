@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using BelajarAksara.Core;
 using BelajarAksara.Utils;
+using BelajarAksara.Managers;
 
 namespace BelajarAksara.UI
 {
@@ -16,6 +17,7 @@ namespace BelajarAksara.UI
 
     private void OnBackClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
       SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
     }
   }

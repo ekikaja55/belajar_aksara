@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using BelajarAksara.Core;
 using BelajarAksara.Utils;
+using BelajarAksara.Data;
+using BelajarAksara.Managers;
 
 namespace BelajarAksara.UI
 {
@@ -19,6 +21,7 @@ namespace BelajarAksara.UI
 
     private void Start()
     {
+      // GameManager.Instance.ResetProgress(); // Dummy: Reset progress setiap kali main menu dibuka, supaya testing lebih gampang
       btnStart.onClick.AddListener(OnStartClicked);
       btnHighscore.onClick.AddListener(OnHighscoreClicked);
       btnExit.onClick.AddListener(OnExitClicked);
@@ -31,16 +34,19 @@ namespace BelajarAksara.UI
     {
       // Sesuai alur draft: Mulai -> masuk ke PraPlaying (pilih level),
       // bukan langsung ke Ingame, tapi refer ke Constants.cs
+      AudioManager.Instance.PlayBtnClick();
       SceneLoader.Instance.LoadScene(Constants.SCENE_PRAPLAYING_1_SELECT_LEVEL);
     }
 
     private void OnHighscoreClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
       SceneLoader.Instance.LoadScene(Constants.SCENE_HIGHSCORE);
     }
 
     private void OnExitClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
       // Application.Quit() TIDAK akan terlihat efeknya kalau ditest
       // di dalam Unity Editor (Play mode) -- ini normal, cuma bekerja
       // di build .exe yang sudah jadi.
@@ -56,16 +62,19 @@ namespace BelajarAksara.UI
 
     private void OnSettingsClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
       SceneLoader.Instance.LoadScene(Constants.SCENE_SETTINGS);
     }
 
     private void OnTutorialClicked()
     {
-      SceneLoader.Instance.LoadScene(Constants.SCENE_PRAPLAYING_2_TUTORIAL);
+      AudioManager.Instance.PlayBtnClick();
+      SceneLoader.Instance.LoadScene(Constants.SCENE_TUTORIAL_MAIN_MENU);
     }
 
     private void OnAboutClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
       SceneLoader.Instance.LoadScene(Constants.SCENE_ABOUT);
     }
   }

@@ -90,7 +90,7 @@ namespace BelajarAksara.Data
     // ----- HIGHSCORE -----
 
     // Simpan 1 entry highscore baru. Dipanggil dari PostIngameUI
-    // saat kondisi trigger post-game terpenuhi (lives habis / tamat game).
+    // saat kondisi trigger post-game terpenuhi (lives habis / keluar /tamat game).
     public static void SaveHighscore(HighscoreEntry entry)
     {
       HighscoreRow row = new HighscoreRow
@@ -184,7 +184,7 @@ namespace BelajarAksara.Data
     // ----- CLEANUP -----
 
     // Dipanggil saat aplikasi ditutup (dari GameManager.OnApplicationQuit()
-    // misalnya), supaya koneksi database ditutup dengan rapi.
+    // supaya koneksi database ditutup dengan rapi.
     public static void Close()
     {
       if (_connection != null)

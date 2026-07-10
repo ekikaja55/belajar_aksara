@@ -42,16 +42,16 @@ TAHAP 3 - MAIN MENU (scene 00) SELESAI
 [x] Test: dari MainMenu bisa pindah ke scene lain dan balik lagi
 
 
-TAHAP 4 - SCENE PENDUKUNG (bisa dicicil, pola mirip)
+TAHAP 4 - SCENE PENDUKUNG (bisa dicicil, pola mirip) SELESAI
 -------------------------------------------------
 [x] 03_About - text + foto pembuat (static)
 [x] 02_Settings - slider bg_music & sfx, tombol simpan
 [x] 01_Highscore - load data dari SQLite, tampilkan
     list (waktu, score, level_mulai, level_akhir)
-[ ] 04_PraPlaying1_SelectLevel - render 3 tombol level
+[x] 04_PraPlaying1_SelectLevel - render 3 tombol level
     (lock/unlock sesuai progress)
-[ ] 05_PraPlaying2_Tutorial - text tutorial + tombol lanjut
-[ ] 06_PraPlaying3_Dictionary - grid kamus aksara (referensi)
+[x] 05_PraPlaying2_Tutorial - text tutorial + tombol lanjut
+[x] 06_PraPlaying3_Dictionary - grid kamus aksara (referensi)
 
 
 TAHAP 5 - INGAME LEVEL 1 (scene 07) [INTI GAMEPLAY]
@@ -104,7 +104,6 @@ TAHAP 9 - POLISH & FINALISASI
 [ ] Cek semua scene sudah terdaftar di Build Profiles urut benar
 [ ] Ganti Company Name di Player Settings (masih DefaultCompany)
 [ ] Build EXE
-[ ] Rekam demo_exe.mp4
 [ ] Susun laporan_project_game.pdf
 [ ] Kumpulkan struktur folder zip akhir sesuai format:
     source_project/, belajar_aksara.exe, laporan_project_game.pdf,

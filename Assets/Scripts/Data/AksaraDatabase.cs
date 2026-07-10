@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace BelajarAksara.Data
 {
+// class AksaraQuestion untuk class questionnya
   [Serializable]
   public class AksaraQuestion
   {
@@ -15,10 +16,12 @@ namespace BelajarAksara.Data
 
     public string JawabanGabungan
     {
+      // misal ["ha","na"] -> "hana"
       get { return string.Join("", HurufPenyusun); }
     }
   }
 
+// untuk class question nya
   public static class AksaraDatabase
   {
     // LEVEL 1 - 18 huruf tunggal
@@ -59,15 +62,15 @@ namespace BelajarAksara.Data
     };
 
     // LEVEL 3 - 6 kombinasi 3 huruf
-    public static readonly AksaraQuestion[] Level3 = new AksaraQuestion[]
-    {
-            new AksaraQuestion("ha", "na", "ca"),
-            new AksaraQuestion("ra", "ka", "da"),
-            new AksaraQuestion("ta", "sa", "wa"),
-            new AksaraQuestion("la", "ma", "ga"),
-            new AksaraQuestion("ba", "nga", "pa"),
-            new AksaraQuestion("ja", "ya", "nya")
-    };
+    // public static readonly AksaraQuestion[] Level3 = new AksaraQuestion[]
+    // {
+    //         new AksaraQuestion("ha", "na", "ca"),
+    //         new AksaraQuestion("ra", "ka", "da"),
+    //         new AksaraQuestion("ta", "sa", "wa"),
+    //         new AksaraQuestion("la", "ma", "ga"),
+    //         new AksaraQuestion("ba", "nga", "pa"),
+    //         new AksaraQuestion("ja", "ya", "nya")
+    // };
 
     public static AksaraQuestion[] GetQuestionsByLevel(int level)
     {
@@ -75,7 +78,7 @@ namespace BelajarAksara.Data
       {
         case 1: return Level1;
         case 2: return Level2;
-        case 3: return Level3;
+        // case 3: return Level3;
         default: return new AksaraQuestion[0];
       }
     }

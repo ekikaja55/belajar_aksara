@@ -30,6 +30,8 @@ namespace BelajarAksara.Core
       StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
+    // ini bawaan dari unity untuk ngemanage jadi scene ini tidak akan berganti sampai
+    // scene selanjutnya selesai di load
     private System.Collections.IEnumerator LoadSceneRoutine(string sceneName)
     {
       AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);

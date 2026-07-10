@@ -8,22 +8,31 @@ namespace BelajarAksara.Core
   {
     public static GameManager Instance { get; private set; }
 
-    public int CurrentLevel = 1;
+    [Header("Game State")]
+    public int SessionStartLevel = 1;  // level_mulai: di-set SEKALI di awal sesi (PraPlaying1), TIDAK PERNAH berubah lagi
+    public int CurrentLevel = 1;        // level_akhir/level SEKARANG: berubah tiap kali pindah ke level berikutnya
     public int CurrentScore = 0;
     public int CurrentLives = Constants.STARTING_LIVES;
 
-    public int SelectedLevelTarget = 1;
+    [Header("Level Management")]
     public int HighestUnlockedLevel = 1;
 
+    // adalah singleton, jadi di Awake() kita pastiin cuma ada 1 instance GameManager di scene mana pun
+    // Awake() itu bawaan Unity, dipanggil sebelum Start(), dan dipanggil sekali saat object diinisialisasi
     private void Awake()
     {
+      // logicnya adalah jika Instance sudah ada dan bukan this, berarti ada GameManager lain di scene, jadi destroy this
+      // ibarat kaya bilang "Eh, udah ada GameManager di scene, jadi kamu ga perlu ada lagi, bye!"
       if (Instance != null && Instance != this)
       {
         Destroy(gameObject);
         return;
       }
 
+      // kalo belum ada instance, berarti ini GameManager pertama yang muncul, jadi kita set Instance ke this
       Instance = this;
+
+      // ini adalah function bawaan unity buat mencegah game manager ini YANG ADA DI MAIN MENU KE DESTROY
       DontDestroyOnLoad(gameObject);
 
       // Inisialisasi database SQLite sekali di awal, sebelum
@@ -42,6 +51,7 @@ namespace BelajarAksara.Core
     public void StartNewSession(int level)
     {
       CurrentLevel = level;
+      SessionStartLevel = level;
       CurrentScore = 0;
       CurrentLives = Constants.STARTING_LIVES;
     }
@@ -90,6 +100,11 @@ namespace BelajarAksara.Core
     private void LoadProgress()
     {
       HighestUnlockedLevel = PlayerPrefs.GetInt(Constants.PREF_UNLOCKED_LEVEL, 1);
+    }
+
+    public void AdvanceToLevel(int newLevel)
+    {
+      CurrentLevel = newLevel;
     }
   }
 }
