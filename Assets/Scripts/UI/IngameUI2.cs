@@ -280,7 +280,7 @@ namespace BelajarAksara.UI
     {
       AudioManager.Instance.PlayBtnClick();
       ModalManager.Instance.Show(
-          "Jika kamu buka hint, skoremu berkurang 50 loh. Yakin?",
+        $"Jika kamu buka hint, score berkurang '{Constants.HINT_LEVEL_2}'  loh. Yakin?",
           new ModalButtonData("Ya, Buka Hint", OnConfirmHint),
           new ModalButtonData("Batal", () =>
           {
@@ -294,7 +294,7 @@ namespace BelajarAksara.UI
     {
       AudioManager.Instance.PlayBtnClick();
       int currentScore = GameManager.Instance.CurrentScore;
-      int newScore = Mathf.Max(0, currentScore - 50);
+      int newScore = Mathf.Max(0, currentScore - Constants.HINT_LEVEL_2);
       int actualDeduction = currentScore - newScore;
 
       GameManager.Instance.AddScore(-actualDeduction);
@@ -337,6 +337,7 @@ namespace BelajarAksara.UI
 
     private void OnLevelComplete()
     {
+      SaveScoreToHighscore();
       SceneLoader.Instance.LoadScene(Constants.SCENE_POSTINGAME_ENDGAME);
     }
 

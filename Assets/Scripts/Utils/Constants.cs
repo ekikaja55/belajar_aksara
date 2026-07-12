@@ -18,8 +18,7 @@ namespace BelajarAksara.Utils
     public const string SCENE_INGAME_LEVEL_1 = "08_Ingame_Level1";
     public const string SCENE_INGAME_LEVEL_2 = "09_Ingame_Level2";
 
-    // level 3 belum dipakai, jadi sementara dikomen dulu
-    // public const string SCENE_INGAME_LEVEL_3 = "10_Ingame_Level3";
+    public const string SCENE_INGAME_LEVEL_3 = "10_Ingame_Level3";
 
     public const string SCENE_POSTINGAME_GAMEOVER = "11_PostIngame1_GameOver";
     public const string SCENE_POSTINGAME_NEXTLEVEL = "12_PostIngame2_NextLevel";
@@ -34,10 +33,13 @@ namespace BelajarAksara.Utils
 
     public const int SCORE_LEVEL_1 = 100;
     public const int SCORE_LEVEL_2 = 300;
-    // public const int SCORE_LEVEL_3 = 600;
+    public const int SCORE_LEVEL_3 = 600;
 
-    //level 2 jadi level terakhir dulu, level 3 belum dipakai, jadi sementara dikomen dulu
-    public const int TOTAL_LEVELS = 2;
+    public const int HINT_LEVEL_1 = 100;
+    public const int HINT_LEVEL_2 = 200;
+    public const int HINT_LEVEL_3 = 300;
+
+    public const int TOTAL_LEVELS = 3;
 
     // PLAYERPREFS KEYS (sementara, sebelum pindah ke SQLite)
     public const string PREF_UNLOCKED_LEVEL = "UnlockedLevel";

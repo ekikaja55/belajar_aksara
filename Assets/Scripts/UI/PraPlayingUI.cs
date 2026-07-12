@@ -19,7 +19,7 @@ namespace BelajarAksara.UI
     [Header("Level Buttons")]
     public LevelButtonRefs level1;
     public LevelButtonRefs level2;
-    // public LevelButtonRefs level3;
+    public LevelButtonRefs level3;
 
     [Header("Navigation")]
     public Button btnBack;
@@ -32,7 +32,7 @@ namespace BelajarAksara.UI
 
       SetupLevelButton(level1);
       SetupLevelButton(level2);
-      // SetupLevelButton(level3);
+      SetupLevelButton(level3);
     }
 
     private void SetupLevelButton(LevelButtonRefs levelBtn)
@@ -76,9 +76,9 @@ namespace BelajarAksara.UI
         case 2:
           SceneLoader.Instance.LoadScene(Constants.SCENE_INGAME_LEVEL_2);
           break;
-        // case 3:
-        //   SceneLoader.Instance.LoadScene(Constants.SCENE_INGAME_LEVEL_3);
-        //   break;
+        case 3:
+          SceneLoader.Instance.LoadScene(Constants.SCENE_INGAME_LEVEL_3);
+          break;
       }
     }
 

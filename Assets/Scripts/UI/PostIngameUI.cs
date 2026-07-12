@@ -19,7 +19,7 @@ namespace BelajarAksara.UI
     {
       labelLevel.text = GameManager.Instance.CurrentLevel.ToString();
       labelScore.text = GameManager.Instance.CurrentScore.ToString();
-      
+
       AudioManager.Instance.PlayGameOver();
       btnHighscore.onClick.AddListener(OnHighscoreClicked);
     }
