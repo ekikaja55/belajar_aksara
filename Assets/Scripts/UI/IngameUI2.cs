@@ -338,7 +338,7 @@ namespace BelajarAksara.UI
     private void OnLevelComplete()
     {
       SaveScoreToHighscore();
-      SceneLoader.Instance.LoadScene(Constants.SCENE_POSTINGAME_ENDGAME);
+      SceneLoader.Instance.LoadScene(Constants.SCENE_POSTINGAME_NEXTLEVEL);
     }
 
     private void OnGameOver()

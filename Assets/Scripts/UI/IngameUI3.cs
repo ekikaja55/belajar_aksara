@@ -5,6 +5,7 @@ using BelajarAksara.Managers;
 using BelajarAksara.Utils;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace BelajarAksara.UI
 {
   public class IngameUI3 : MonoBehaviour
@@ -35,17 +36,13 @@ namespace BelajarAksara.UI
     private int _currentQuestionIndex = 0;
     private AksaraQuestion[] _questions;
 
-    private string _slot1Value = null;
-    private DraggableAnswer _slot1Draggable = null;
-
-    private string _slot2Value = null;
-    private DraggableAnswer _slot2Draggable = null;
-
-    private string _slot3Value = null;
-    private DraggableAnswer _slot3Draggable = null;
+    // State per slot: nilai huruf yang sudah benar + reference draggable-nya
+    // (dipakai untuk "unhide" balik kalau ada slot berikutnya yang salah)
+    private string[] _slotValues = new string[3];
+    private DraggableAnswer[] _slotDraggables = new DraggableAnswer[3];
 
     private bool _isProcessingAnswer = false;
-    private int _step_count = 0;
+    private int _stepCount = 0; // 0 = belum ada drop, 1/2/3 = drop ke berapa yang SEDANG diproses
 
     void Start()
     {
@@ -56,7 +53,6 @@ namespace BelajarAksara.UI
       dropZone.onAnswerDropped = OnAnswerDropped;
       RenderCurrentQuestion();
       UpdateHeaderUI();
-      _step_count = 0;
     }
 
     private void UpdateHeaderUI()
@@ -105,10 +101,14 @@ namespace BelajarAksara.UI
       int pengecoh = 0;
       int idx = 0;
 
-      while (pengecoh < 4 && idx < level1Letters.Length)
+      while (pengecoh < 3 && idx < level1Letters.Length)
       {
         string candidate = level1Letters[idx].HurufPenyusun[0];
-        if (candidate != currentQuestion.HurufPenyusun[0] && candidate != currentQuestion.HurufPenyusun[1])
+        bool isPartOfAnswer = candidate == currentQuestion.HurufPenyusun[0]
+                            || candidate == currentQuestion.HurufPenyusun[1]
+                            || candidate == currentQuestion.HurufPenyusun[2];
+
+        if (!isPartOfAnswer)
         {
           result.Add(candidate);
           pengecoh++;
@@ -134,16 +134,17 @@ namespace BelajarAksara.UI
 
     private void ResetSlots()
     {
-      // Kalau ada draggable yang sudah menempel di slot 1, balikkan ke posisi asal
-      if (_slot1Draggable != null) _slot1Draggable.ResetToOriginalPosition();
-      if (_slot2Draggable != null) _slot2Draggable.ResetToOriginalPosition();
+      for (int i = 0; i < 3; i++)
+      {
+        if (_slotDraggables[i] != null)
+        {
+          _slotDraggables[i].ResetToOriginalPosition();
+        }
+        _slotValues[i] = null;
+        _slotDraggables[i] = null;
+      }
 
-      _slot1Value = null;
-      _slot1Draggable = null;
-
-      _slot2Value = null;
-      _slot2Draggable = null;
-
+      _stepCount = 0;
       titleDropBox.text = "Taruh Disini";
     }
 
@@ -152,71 +153,128 @@ namespace BelajarAksara.UI
       if (_isProcessingAnswer) return;
       _isProcessingAnswer = true;
 
-      AksaraQuestion currenQuestion = _questions[_currentQuestionIndex];
+      AksaraQuestion currentQuestion = _questions[_currentQuestionIndex];
 
-      switch (_step_count)
-      {
-        case 1:
-          ProcessFirstDrop(droppedAnswer, currenQuestion);
-          break;
-        case 2:
-          ProcessSecondDrop(droppedAnswer, currenQuestion);
-          break;
-        case 3:
-          ProcessThirdDrop(droppedAnswer, currenQuestion);
-          break;
-      }
-      _isProcessingAnswer = false;
-    }
-
-    // 3 drop answer pake flag??
-    private void ProcessFirstDrop(DraggableAnswer droppedAnswer, AksaraQuestion currentQuestion)
-    {
-      bool isCorrect = droppedAnswer.letterValue == currentQuestion.HurufPenyusun[0];
+      // Drop yang sedang diproses adalah step berikutnya dari yang terakhir
+      int stepToProcess = _stepCount + 1;
+      bool isCorrect = droppedAnswer.letterValue == currentQuestion.HurufPenyusun[stepToProcess - 1];
 
       if (isCorrect)
       {
-        AudioManager.Instance.PlayCorrectAnswer();
-        _slot1Value = droppedAnswer.letterValue;
-        _slot1Draggable = droppedAnswer;
-
-        droppedAnswer.SnapToDropZone(dropZone.transform);
-        titleDropBox.text = _slot1Value;
-
-        ModalManager.Instance.Show(
-          "Benar! Lanjutkan dengan huruf kedua.",
-          new ModalButtonData("Lanjut", () =>
-          {
-            AudioManager.Instance.PlayBtnClick();
-          })
-        );
-
+        ProcessCorrectDrop(droppedAnswer, stepToProcess);
       }
       else
       {
         HandleWrongDrop(droppedAnswer);
       }
-    }
-    private void ProcessSecondDrop(DraggableAnswer droppedAnswer, AksaraQuestion currentQuestion) { }
-    private void ProcessThirdDrop(DraggableAnswer droppedAnswer, AksaraQuestion currentQuestion) { }
 
-    private void HandleWrongDrop(DraggableAnswer wrongAnswer) { }
+      _isProcessingAnswer = false;
+    }
+
+    private void ProcessCorrectDrop(DraggableAnswer droppedAnswer, int step)
+    {
+      AudioManager.Instance.PlayCorrectAnswer();
+
+      int slotIndex = step - 1; // step 1 -> index 0, step 2 -> index 1, dst
+      _slotValues[slotIndex] = droppedAnswer.letterValue;
+      _slotDraggables[slotIndex] = droppedAnswer;
+
+      droppedAnswer.SnapToDropZone(dropZone.transform);
+
+      // Update tampilan drop box dengan huruf-huruf yang sudah benar sejauh ini
+      titleDropBox.text = string.Join("", _slotValues, 0, step);
+
+      _stepCount = step;
+
+      if (step < 3)
+      {
+        string stepLabel = step == 1 ? "kedua" : "ketiga";
+        ModalManager.Instance.Show(
+            $"Benar! Lanjutkan dengan huruf {stepLabel}.",
+            new ModalButtonData("Lanjut", () =>
+            {
+              AudioManager.Instance.PlayBtnClick();
+            })
+        );
+      }
+      else
+      {
+        // Step 3 selesai -> jawaban lengkap benar
+        ModalManager.Instance.Show(
+            "Jawaban benar! Skor bertambah!",
+            new ModalButtonData("Lanjut", () =>
+            {
+              AudioManager.Instance.PlayBtnClick();
+              HandleQuestionComplete();
+            })
+        );
+      }
+    }
+
+    private void HandleWrongDrop(DraggableAnswer wrongAnswer)
+    {
+      AudioManager.Instance.PlayWrongAnswer();
+
+      GameManager.Instance.LoseLife();
+      UpdateHeaderUI();
+
+      wrongAnswer.ResetToOriginalPosition();
+      ResetSlots();
+
+      if (GameManager.Instance.IsGameOver())
+      {
+        ModalManager.Instance.Show(
+            "Nyawa habis!",
+            new ModalButtonData("Oke", () =>
+            {
+              AudioManager.Instance.PlayBtnClick();
+              OnGameOver();
+            })
+        );
+      }
+      else
+      {
+        ModalManager.Instance.Show(
+            "Salah! Jawaban direset, coba lagi dari awal.",
+            new ModalButtonData("Oke", () =>
+            {
+              AudioManager.Instance.PlayBtnClick();
+            })
+        );
+      }
+    }
+
+    private void HandleQuestionComplete()
+    {
+      GameManager.Instance.AddScore(Constants.SCORE_LEVEL_3);
+      UpdateHeaderUI();
+
+      _currentQuestionIndex++;
+
+      if (_currentQuestionIndex >= _questions.Length)
+      {
+        OnLevelComplete();
+      }
+      else
+      {
+        RenderCurrentQuestion();
+      }
+    }
 
     private void OnHintClicked()
     {
       AudioManager.Instance.PlayBtnClick();
       ModalManager.Instance.Show(
-        $"Jika kamu buka hint, score berkurang '{Constants.HINT_LEVEL_3}' loh. Yakin?",
-        new ModalButtonData("Ya, Buka Hint", () =>
-        {
-          AudioManager.Instance.PlayBtnClick();
-          OnConfirmHint();
-        }),
-        new ModalButtonData("Batal", () =>
-        {
-          AudioManager.Instance.PlayBtnClick();
-          ModalManager.Instance.Hide();
-        })
+          $"Jika kamu buka hint, score berkurang '{Constants.HINT_LEVEL_3}' loh. Yakin?",
+          new ModalButtonData("Ya, Buka Hint", () =>
+          {
+            AudioManager.Instance.PlayBtnClick();
+            OnConfirmHint();
+          }),
+          new ModalButtonData("Batal", () =>
+          {
+            AudioManager.Instance.PlayBtnClick();
+          })
       );
     }
 
@@ -224,47 +282,55 @@ namespace BelajarAksara.UI
     {
       int currentScore = GameManager.Instance.CurrentScore;
       int newScore = Mathf.Max(0, currentScore - Constants.HINT_LEVEL_3);
-      int finalScore = currentScore - newScore;
+      int actualDeduction = currentScore - newScore;
 
-      GameManager.Instance.AddScore(-finalScore);
+      GameManager.Instance.AddScore(-actualDeduction);
       UpdateHeaderUI();
-      AksaraQuestion currentQuestion = _questions[_currentQuestionIndex];
-      ModalManager.Instance.Show(
-        $"Huruf pertama dimulai dengan '{currentQuestion.HurufPenyusun[0][0]}'",
-        new ModalButtonData("Oke", () =>
-        {
-          AudioManager.Instance.PlayBtnClick();
-          ModalManager.Instance.Hide();
-        })
-      );
 
+      AksaraQuestion currentQuestion = _questions[_currentQuestionIndex];
+
+      // Hint dinamis sesuai step yang sedang berjalan
+      int hintStepIndex = Mathf.Min(_stepCount, 2); // step 0/1/2 -> index huruf yang relevan
+      string[] stepLabels = { "pertama", "kedua", "ketiga" };
+
+      string hintMessage = $"Huruf {stepLabels[hintStepIndex]} dimulai dengan '{currentQuestion.HurufPenyusun[hintStepIndex][0]}'";
+
+      ModalManager.Instance.Show(
+          hintMessage,
+          new ModalButtonData("Oke", () =>
+          {
+            AudioManager.Instance.PlayBtnClick();
+          })
+      );
     }
 
     private void OnExitClicked()
     {
       AudioManager.Instance.PlayBtnClick();
       ModalManager.Instance.Show(
-        "Yakin ingin keluar? Progress belajar tidak akan disimpan.",
-        new ModalButtonData("Ya, keluar", () =>
-        {
-          AudioManager.Instance.PlayBtnClick();
-          SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
-        }),
-        new ModalButtonData("Batal", () =>
-        {
-          AudioManager.Instance.PlayBtnClick();
-          ModalManager.Instance.Hide();
-        })
+          "Yakin ingin keluar? Progress belajar tidak akan disimpan.",
+          new ModalButtonData("Ya, Keluar", () =>
+          {
+            AudioManager.Instance.PlayBtnClick();
+            SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
+          }),
+          new ModalButtonData("Batal", () =>
+          {
+            AudioManager.Instance.PlayBtnClick();
+          })
       );
     }
 
     private void OnLevelComplete()
     {
+      AudioManager.Instance.PlayLevelCompleted();
+      SaveScoreToHighscore();
       SceneLoader.Instance.LoadScene(Constants.SCENE_POSTINGAME_ENDGAME);
     }
 
     private void OnGameOver()
     {
+      AudioManager.Instance.PlayGameOver();
       SaveScoreToHighscore();
       SceneLoader.Instance.LoadScene(Constants.SCENE_POSTINGAME_GAMEOVER);
     }
