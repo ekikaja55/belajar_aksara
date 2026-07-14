@@ -40,9 +40,9 @@ namespace BelajarAksara.UI
         case 2:
           SceneLoader.Instance.LoadScene(Constants.SCENE_INGAME_LEVEL_2);
           break;
-        // case 3:
-        //   SceneLoader.Instance.LoadScene(Constants.SCENE_INGAME_LEVEL_3);
-        //   break;
+        case 3:
+          SceneLoader.Instance.LoadScene(Constants.SCENE_INGAME_LEVEL_3);
+          break;
       }
     }
 
@@ -52,9 +52,10 @@ namespace BelajarAksara.UI
       ModalManager.Instance.Show(
           "Keluar dari permainan? Progres akhirmu akan tersimpan.",
           new ModalButtonData("Ya", OnExitConfirmed),
-          new ModalButtonData("Tidak", () => {
-              AudioManager.Instance.PlayBtnClick();
-              ModalManager.Instance.Hide();
+          new ModalButtonData("Tidak", () =>
+          {
+            AudioManager.Instance.PlayBtnClick();
+            ModalManager.Instance.Hide();
           })
       );
     }
