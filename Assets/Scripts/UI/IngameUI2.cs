@@ -19,12 +19,12 @@ namespace BelajarAksara.UI
     public Image imageQuestion2;
 
     [Header("Answer Choices")]
-    public DraggableAnswer[] answerChoices; // 6 pilihan
-    public TMPro.TextMeshProUGUI[] answerChoiceTexts; // 6 text, urutan sama dengan answerChoices
+    public DraggableAnswer[] answerChoices;
+    public TMPro.TextMeshProUGUI[] answerChoiceTexts;
 
     [Header("Drop Zone")]
     public AnswerDropZone dropZone;
-    public TMPro.TextMeshProUGUI titleDropBox; // feedback teks di drop box
+    public TMPro.TextMeshProUGUI titleDropBox;
 
     [Header("Navigation")]
     public Button btnExit;
@@ -35,7 +35,6 @@ namespace BelajarAksara.UI
     private int _currentQuestionIndex = 0;
     private AksaraQuestion[] _questions;
 
-    // State slot untuk 2 huruf yang sedang di-drop
     private string _slot1Value = null;
     private DraggableAnswer _slot1Draggable = null;
 
@@ -53,8 +52,6 @@ namespace BelajarAksara.UI
       RenderCurrentQuestion();
       UpdateHeaderUI();
     }
-
-    // ----- RENDER SOAL -----
 
     private void RenderCurrentQuestion()
     {
@@ -82,9 +79,6 @@ namespace BelajarAksara.UI
       }
     }
 
-    // 6 pilihan: 2 huruf jawaban benar (HurufPenyusun[0] & [1]) +
-    // 4 huruf pengecoh diambil dari huruf-huruf lain di Level 1
-    // (tidak random urutannya -- diambil berurutan dari AksaraDatabase.Level1,
     private List<string> GetSixChoices(AksaraQuestion currentQuestion)
     {
       List<string> result = new List<string>
@@ -124,8 +118,6 @@ namespace BelajarAksara.UI
       return sprite;
     }
 
-    // ----- JAWABAN (2 SLOT) -----
-
     private void OnAnswerDropped(DraggableAnswer droppedAnswer)
     {
       if (_isProcessingAnswer) return;
@@ -135,12 +127,10 @@ namespace BelajarAksara.UI
 
       if (_slot1Value == null)
       {
-        // Ini drop PERTAMA
         ProcessFirstDrop(droppedAnswer, currentQuestion);
       }
       else
       {
-        // Ini drop KEDUA
         ProcessSecondDrop(droppedAnswer, currentQuestion);
       }
 
@@ -206,7 +196,6 @@ namespace BelajarAksara.UI
 
       wrongAnswer.ResetToOriginalPosition();
 
-      // Reset SEMUA slot, termasuk huruf pertama yang sudah benar sebelumnya
       ResetSlots();
 
       if (GameManager.Instance.IsGameOver())
@@ -238,7 +227,6 @@ namespace BelajarAksara.UI
 
     private void ResetSlots()
     {
-      // Kalau ada draggable yang sudah menempel di slot 1, balikkan ke posisi asal
       if (_slot1Draggable != null)
       {
         _slot1Draggable.ResetToOriginalPosition();
@@ -266,15 +254,11 @@ namespace BelajarAksara.UI
       }
     }
 
-    // ----- UI UPDATE -----
-
     private void UpdateHeaderUI()
     {
       textScore.text = GameManager.Instance.CurrentScore.ToString();
       textLives.text = GameManager.Instance.CurrentLives.ToString();
     }
-
-    // ----- HINT -----
 
     private void OnHintClicked()
     {
@@ -311,8 +295,6 @@ namespace BelajarAksara.UI
       );
     }
 
-    // ----- EXIT -----
-
     private void OnExitClicked()
     {
       AudioManager.Instance.PlayBtnClick();
@@ -333,11 +315,10 @@ namespace BelajarAksara.UI
       SceneLoader.Instance.LoadScene(Constants.SCENE_MAIN_MENU);
     }
 
-    // ----- LEVEL TRANSITIONS -----
-
     private void OnLevelComplete()
     {
-      SaveScoreToHighscore();
+      AudioManager.Instance.PlayBtnClick();
+      GameManager.Instance.UnlockNextLevel();
       SceneLoader.Instance.LoadScene(Constants.SCENE_POSTINGAME_NEXTLEVEL);
     }
 

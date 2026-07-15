@@ -6,7 +6,6 @@ using TMPro;
 
 namespace BelajarAksara.Managers
 {
-  // "Resep" 1 tombol modal: label yang ditampilkan + aksi yang dijalankan saat diklik
   public class ModalButtonData
   {
     public string Label;
@@ -24,10 +23,10 @@ namespace BelajarAksara.Managers
     public static ModalManager Instance { get; private set; }
 
     [Header("References")]
-    public GameObject modalPanel;          // GameObject ConfirmModal
+    public GameObject modalPanel;
     public TextMeshProUGUI modalMessage;
-    public Transform buttonContainer;      // BtnGroup, tempat tombol di-generate
-    public GameObject buttonPrefab;         // Prefab 1 tombol modal
+    public Transform buttonContainer;
+    public GameObject buttonPrefab;
 
     private void Awake()
     {
@@ -46,13 +45,11 @@ namespace BelajarAksara.Managers
       Debug.Log($"[ModalManager] Show dipanggil. modalPanel={modalPanel}, modalMessage={modalMessage}, buttonContainer={buttonContainer}, buttonPrefab={buttonPrefab}");
       modalMessage.text = message;
 
-      // Bersihkan tombol-tombol lama sebelum bikin yang baru
       foreach (Transform child in buttonContainer)
       {
         Destroy(child.gameObject);
       }
 
-      // Bikin tombol sesuai jumlah yang diminta pemanggil
       foreach (ModalButtonData buttonData in buttons)
       {
         GameObject btnInstance = Instantiate(buttonPrefab, buttonContainer);
@@ -61,8 +58,6 @@ namespace BelajarAksara.Managers
 
         btnText.text = buttonData.Label;
 
-        // Simpan referensi lokal supaya closure di bawah ini benar
-        // (penting: jangan pakai variable loop langsung di lambda)
         Action onClickAction = buttonData.OnClick;
         btn.onClick.AddListener(() =>
         {

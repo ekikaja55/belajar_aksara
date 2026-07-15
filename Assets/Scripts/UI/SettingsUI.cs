@@ -82,6 +82,7 @@ namespace BelajarAksara.UI
     // ----- PENYIMPANAN -----
     private void OnSaveClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
       SettingsData newData = new SettingsData
       {
         BgMusicVolume = bgmSlider.value,
@@ -94,13 +95,19 @@ namespace BelajarAksara.UI
 
       ModalManager.Instance.Show(
           "Pengaturan berhasil disimpan!",
-          new ModalButtonData("Oke", () => { ModalManager.Instance.Hide(); })
+          new ModalButtonData("Oke", () =>
+          {
+            AudioManager.Instance.PlayBtnClick();
+            ModalManager.Instance.Hide();
+          })
       );
     }
 
     // ----- KELUAR & VALIDASI PERUBAHAN -----
     private void OnKeluarClicked()
     {
+      AudioManager.Instance.PlayBtnClick();
+
       // Cek apakah nilai slider saat ini berbeda dari nilai asli
       // (Menggunakan Mathf.Abs karena membandingkan tipe float langsung kadang tidak akurat)
       bool isBgmChanged = Mathf.Abs(bgmSlider.value - _originalBgmVolume) > 0.01f;
@@ -111,8 +118,16 @@ namespace BelajarAksara.UI
         // Trigger modal karena ada yang belum disave
         ModalManager.Instance.Show(
             "Ada perubahan yang belum disimpan. Yakin ingin keluar?",
-            new ModalButtonData("Ya, Keluar", ProceedExit),
-            new ModalButtonData("Batal", () => { ModalManager.Instance.Hide(); })
+            new ModalButtonData("Ya, Keluar", () =>
+            {
+              AudioManager.Instance.PlayBtnClick();
+              ProceedExit();
+            }),
+            new ModalButtonData("Batal", () =>
+            {
+              AudioManager.Instance.PlayBtnClick();
+              ModalManager.Instance.Hide();
+            })
         );
       }
       else

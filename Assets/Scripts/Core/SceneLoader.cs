@@ -24,14 +24,11 @@ namespace BelajarAksara.Core
       SceneManager.LoadScene(sceneName);
     }
 
-    // Berguna nanti untuk loading screen / transisi per scene (opsional si)
     public void LoadSceneAsync(string sceneName)
     {
       StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
-    // ini bawaan dari unity untuk ngemanage jadi scene ini tidak akan berganti sampai
-    // scene selanjutnya selesai di load
     private System.Collections.IEnumerator LoadSceneRoutine(string sceneName)
     {
       AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);

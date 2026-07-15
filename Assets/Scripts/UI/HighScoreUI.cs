@@ -11,12 +11,12 @@ namespace BelajarAksara.UI
   public class HighscoreUI : MonoBehaviour
   {
     [Header("List Rendering")]
-    public Transform contentParent;      // "Content" di dalam ScrollView, tempat row di-instantiate
-    public GameObject rowPrefab;          // Prefab HighScoreRowTemplate
+    public Transform contentParent;
+    public GameObject rowPrefab;
 
     [Header("Empty State")]
-    public GameObject emptyStateText;     // "Belum ada data yang tersimpan"
-    public GameObject scrollView;         // HighscoreScrollView, ditoggle lawan dari emptyState
+    public GameObject emptyStateText;
+    public GameObject scrollView;
 
     [Header("Navigation")]
     public Button btnBack;
@@ -24,8 +24,6 @@ namespace BelajarAksara.UI
     private void Start()
     {
       btnBack.onClick.AddListener(OnBackClicked);
-      // ===== DUMMY DATA UNTUK TESTING - HAPUS/COMMENT SEBELUM FINAL =====
-      // InsertDummyDataForTesting();
       LoadAndRenderHighscores();
     }
 
@@ -40,28 +38,20 @@ namespace BelajarAksara.UI
 
     private void LoadAndRenderHighscores()
     {
-      // Ambil semua data dari SQLite, sudah diurutkan dari score tertinggi
-      // (urutan ini sudah di-handle di SQLiteService.GetAllHighscores())
       List<HighscoreEntry> allScores = SQLiteService.GetAllHighscores();
 
       if (allScores.Count == 0)
       {
-        // Kosong -> tampilkan empty state, sembunyikan ScrollView
         emptyStateText.SetActive(true);
         scrollView.SetActive(false);
         return;
       }
 
-      // Ada data -> tampilkan ScrollView, sembunyikan empty state
       emptyStateText.SetActive(false);
       scrollView.SetActive(true);
 
-      // Bersihkan dulu row-row lama (kalau ada) sebelum render ulang,
-      // supaya nggak numpuk/duplikat kalau LoadAndRenderHighscores()
-      // dipanggil lebih dari sekali
       ClearExistingRows();
 
-      // Loop semua data, bikin 1 GameObject row untuk tiap entry
       foreach (HighscoreEntry entry in allScores)
       {
         GameObject rowInstance = Instantiate(rowPrefab, contentParent);
@@ -73,8 +63,6 @@ namespace BelajarAksara.UI
 
     private void ClearExistingRows()
     {
-      // Hapus semua child yang sudah ada di dalam Content,
-      // biar bersih sebelum di-render ulang
       foreach (Transform child in contentParent)
       {
         Destroy(child.gameObject);
